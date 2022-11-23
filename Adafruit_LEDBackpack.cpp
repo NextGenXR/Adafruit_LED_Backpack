@@ -35,8 +35,28 @@
  *
  */
 
-#include "Adafruit_LEDBackpack.h"
-#include "Adafruit_GFX.h"
+#if __has_include(<main.h>)
+#include <main.h>
+#endif
+
+#include <cstdint>
+#include <stm32yyxx_hal_def.h>
+#include <stm32yyxx_hal_i2c.h>
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+extern I2C_HandleTypeDef hi2c2;
+extern I2C_HandleTypeDef hi2c4;
+
+#ifdef __cplusplus
+}
+#endif
+
+#include <Adafruit_LEDBackpack.h>
+#include <Adafruit_I2CDevice.h>
+
 
 #ifndef _BV
 #define _BV(bit) (1 << (bit)) ///< Bit-value if not defined by Arduino
@@ -262,6 +282,8 @@ static const PROGMEM uint16_t alphafonttable[] = {
     0b0011111111111111,
 
 };
+
+
 void Adafruit_LEDBackpack::setBrightness(uint8_t b) {
   if (b > 15)
     b = 15; // limit to max brightness
@@ -278,12 +300,14 @@ void Adafruit_LEDBackpack::blinkRate(uint8_t b) {
 
 Adafruit_LEDBackpack::Adafruit_LEDBackpack(void) {}
 
-bool Adafruit_LEDBackpack::begin(uint8_t _addr, TwoWire *theWire) {
+Adafruit_LEDBackpack::~Adafruit_LEDBackpack(void) {}
+
+bool Adafruit_LEDBackpack::begin(I2C_AddressTypeDef _addr, I2C_HandleTypeDef * Handle) {
   if (i2c_dev)
     delete i2c_dev;
-  i2c_dev = new Adafruit_I2CDevice(_addr, theWire);
+  i2c_dev = new Adafruit_I2CDevice(_addr, Handle);
   if (!i2c_dev->begin())
-    return false;
+    return (false);
 
   // turn on oscillator
   uint8_t buffer[1] = {0x21};
@@ -300,7 +324,7 @@ bool Adafruit_LEDBackpack::begin(uint8_t _addr, TwoWire *theWire) {
 
   setBrightness(15); // max brightness
 
-  return true;
+  return (true);
 }
 
 void Adafruit_LEDBackpack::writeDisplay(void) {

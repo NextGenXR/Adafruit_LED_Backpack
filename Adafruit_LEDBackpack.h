@@ -14,30 +14,56 @@
  * please support Adafruit and open-source hardware by purchasing
  * products from Adafruit!
  *
+ * @section dependencies Dependencies
+ *
+ * This library depends on <a
+ * href="https://github.com/adafruit/Adafruit-GFX-Library"> Adafruit_GFX</a>
+ * being present on your system. Please make sure you have installed the latest
+ * version before using this library.
+ *
+ * @section author Author
+ *
  * Written by Limor Fried/Ladyada for Adafruit Industries.
  *
+ * @section license License
+ *
  * MIT license, all text above must be included in any redistribution
- */
-
-#ifndef Adafruit_LEDBackpack_h
-#define Adafruit_LEDBackpack_h
 
 #if (ARDUINO >= 100)
 #include "Arduino.h"
 #else
 #include "WProgram.h"
 #endif
+#ifndef BSP_7SEGDISPLAY_SEVENSEG_H_
+#define BSP_7SEGDISPLAY_SEVENSEG_H_
 
+#include <cstdint>
+#include <Print.h>
+#include <WString.h>
 #include <Adafruit_I2CDevice.h>
 
-#include "Adafruit_GFX.h"
+enum I2C_Ports
+{
+	I2C_1,
+	I2C_2,
+	I2C_3,
+	I2C_4,
+	I2C_5
+};
+
+// #define USE_I2C1
+#define USE_I2C2
+// #define USE_I2C3
+#define USE_I2C4
+// #define USE_I2C5
 
 #define LED_ON 1  ///< GFX color of lit LED segments (single-color displays)
 #define LED_OFF 0 ///< GFX color of unlit LED segments (single-color displays)
 
-#define LED_RED 1    ///< GFX color for red LED segments (bi-color displays)
-#define LED_YELLOW 2 ///< GFX color for yellow LED segments (bi-color displays)
-#define LED_GREEN 3  ///< GFX color for green LED segments (bi-color displays)
+#define Ada_LED_RED 1    ///< GFX color for red LED segments (bi-color displays)
+#define Ada_LED_YELLOW 2 ///< GFX color for yellow LED segments (bi-color displays)
+#define Ada_LED_GREEN 3  ///< GFX color for green LED segments (bi-color displays)
+
 
 #define HT16K33_BLINK_CMD 0x80       ///< I2C register for BLINK setting
 #define HT16K33_BLINK_DISPLAYON 0x01 ///< I2C value for steady on
@@ -53,47 +79,51 @@
 /*!
     @brief  Class encapsulating the raw HT16K33 controller device.
 */
-class Adafruit_LEDBackpack {
+#define RAW_BITS 0 ///< Issue 7-segment data as raw bits
+
+class Adafruit_LEDBackpack
+{
 public:
   /*!
     @brief  Constructor for HT16K33 devices.
   */
-  Adafruit_LEDBackpack(void);
+	Adafruit_LEDBackpack();
+	virtual ~Adafruit_LEDBackpack();
 
-  /*!
-    @brief  Start I2C and initialize display state (blink off, full
-            brightness).
-    @param  _addr  I2C address.
-    @param  theWire  TwoWire bus reference to use.
-    @return  true if successful, otherwise false
+/*!
+	@brief  Start I2C and initialize display state (blink off, full
+			brightness).
+	@param  _addr  I2C address.
+	@param  theWire  TwoWire bus reference to use.
+	@return  true if successful, otherwise false
 
   */
-  bool begin(uint8_t _addr = 0x70, TwoWire *theWire = &Wire);
+  bool begin(I2C_AddressTypeDef _addr, I2C_HandleTypeDef * Handle);
 
   /*!
-    @brief  Set display brightness.
-    @param  b  Brightness: 0 (min) to 15 (max).
+	@brief  Set display brightness.
+	@param  b  Brightness: 0 (min) to 15 (max).
   */
   void setBrightness(uint8_t b);
 
   /*!
-    @brief  Set display blink rate.
-    @param  b  One of:
-               HT16K33_BLINK_DISPLAYON = steady on
-               HT16K33_BLINK_OFF       = steady off
-               HT16K33_BLINK_2HZ       = 2 Hz blink
-               HT16K33_BLINK_1HZ       = 1 Hz blink
-               HT16K33_BLINK_HALFHZ    = 0.5 Hz blink
+	@brief  Set display blink rate.
+	@param  b  One of:
+			   HT16K33_BLINK_DISPLAYON = steady on
+			   HT16K33_BLINK_OFF       = steady off
+			   HT16K33_BLINK_2HZ       = 2 Hz blink
+			   HT16K33_BLINK_1HZ       = 1 Hz blink
+			   HT16K33_BLINK_HALFHZ    = 0.5 Hz blink
   */
   void blinkRate(uint8_t b);
 
   /*!
-    @brief  Issue buffered data in RAM to display.
+	@brief  Issue buffered data in RAM to display.
   */
   void writeDisplay(void);
 
   /*!
-    @brief  Clear display.
+	@brief  Clear display.
   */
   void clear(void);
 
@@ -218,6 +248,9 @@ public:
     @brief  Constructor for 7-segment numeric displays.
   */
   Adafruit_7segment(void);
+
+  bool detected(void);
+  uint8_t scan(I2C_AddressTypeDef* addresses);
 
   /*!
     @brief   Issue single character to display.
