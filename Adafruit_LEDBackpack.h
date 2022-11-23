@@ -28,14 +28,20 @@
  * @section license License
  *
  * MIT license, all text above must be included in any redistribution
+ *
+ */
+
+#ifndef BSP_7SEGDISPLAY_SEVENSEG_H_
+#define BSP_7SEGDISPLAY_SEVENSEG_H_
+
+#ifdef ARDUINO
 
 #if (ARDUINO >= 100)
 #include "Arduino.h"
 #else
 #include "WProgram.h"
 #endif
-#ifndef BSP_7SEGDISPLAY_SEVENSEG_H_
-#define BSP_7SEGDISPLAY_SEVENSEG_H_
+#endif
 
 #include <cstdint>
 #include <Print.h>
@@ -63,7 +69,6 @@ enum I2C_Ports
 #define Ada_LED_RED 1    ///< GFX color for red LED segments (bi-color displays)
 #define Ada_LED_YELLOW 2 ///< GFX color for yellow LED segments (bi-color displays)
 #define Ada_LED_GREEN 3  ///< GFX color for green LED segments (bi-color displays)
-
 
 #define HT16K33_BLINK_CMD 0x80       ///< I2C register for BLINK setting
 #define HT16K33_BLINK_DISPLAYON 0x01 ///< I2C value for steady on
