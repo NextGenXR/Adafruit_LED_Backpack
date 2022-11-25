@@ -407,6 +407,7 @@ void Adafruit_24bargraph::setBar(uint8_t bar, uint8_t color) {
 }
 
 /******************************* 16x8 MATRIX OBJECT */
+#ifdef USE_ADAFRUIT_GFX
 
 Adafruit_8x16matrix::Adafruit_8x16matrix(void) : Adafruit_GFX(8, 16) {}
 
@@ -579,6 +580,8 @@ void Adafruit_BicolorMatrix::drawPixel(int16_t x, int16_t y, uint16_t color) {
     displaybuffer[y] &= ~(1 << x) & ~(1 << (x + 8));
   }
 }
+
+#endif /* USE_ADAFRUIT_GFX */
 
 /******************************* 7 SEGMENT OBJECT */
 

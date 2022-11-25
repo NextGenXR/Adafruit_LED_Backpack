@@ -159,6 +159,7 @@ public:
 /*!
     @brief  Class for 8x16 pixel single-color matrices.
 */
+#ifdef USE_ADAFRUIT_GFX
 class Adafruit_8x16matrix : public Adafruit_LEDBackpack, public Adafruit_GFX {
 public:
   /*!
@@ -241,6 +242,7 @@ public:
   */
   void drawPixel(int16_t x, int16_t y, uint16_t color);
 };
+#endif /* USE_ADAFRUIT_GFX */
 
 #define RAW_BITS 0 ///< Issue 7-segment data as raw bits
 
